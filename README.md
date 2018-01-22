@@ -7,4 +7,6 @@ the folowing fonctionnality are coded but none of them have been tested:
 
    moveForward(short d) -> move the robot in straight line
   
-   rotate(short rad) -> rotate the robot by the given angle in radian
+   rotate(double rad) -> rotate the robot by the given angle in radian
+   
+   goToCoords(short finalxPos, short finalyPos, double finalAngle) -> move the robot in the given place and the given angle
