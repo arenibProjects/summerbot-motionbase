@@ -5,6 +5,13 @@ class Motion_base {
   
   public : 
   
+	//coords struct
+	typedef struct {
+		double angle;
+		short xPos;
+		short yPos;
+	} Coords;
+  
 	//builder
     Motion_base(
       short rightStepperMovementDirectionPinId, 
@@ -17,9 +24,7 @@ class Motion_base {
       );
 	  
 	//accessors
-    short getXPos(void);
-    short getYPos(void);
-    double getAngle(void);
+    Coords getCoords(void);
 	
 	//movement functions
     void moveStraight(short d);
@@ -29,18 +34,20 @@ class Motion_base {
 	//coords related functions
     void updateCoords(void);
     void goToCoords(short finalXpos, short finalYPos, double finalAngle);
+	
+	
     
   private : 
   
 	//coords
-    short xPos;
-    short yPos;
-    double angle;
+    short xPos, realXPos;
+    short yPos, realYPos;
+    double angle, realAngle;
+	Coords coords;
 	
 	//steppers
     BasicStepperDriver *right;
     BasicStepperDriver *left;
-	
 	
 	//controller
 	SyncDriver *controller;
