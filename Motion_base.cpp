@@ -1,10 +1,5 @@
 // Driver headers
-#include <A4988.h> //stepper up to 1:16
-#include <DRV8825.h> //stepper up to 1:32
-#include <DRV8834.h> //low voltage stepper up to 1:32
-#include <DRV8880.h> //stepper up to 1:16, with current/torque control
-#include <MultiDriver.h> //multi-stepper control
-#include <SyncDriver.h> //synchronized multi-stepper control
+//#include <MultiDriver.h> //multi-stepper control
 #include <math.h> //math lib
 #include <TimeLib.h>
 
@@ -12,19 +7,25 @@
 #include "Motion_base.hpp"
 
 // Dimension
-#define RAYON_ROUE 47 //en mm
-#define RAYON_ROBOT 72 //en mm
+#define RAYON_ROUE 47 // mm
+#define RAYON_ROBOT 72 // mm
 #define NBSTEPS 200
 #define RPM 10
-#define MICROSTEPS 1 //manual micro-stepping set
+
+//Micro-stepping
+#define STRAIGHT_MICROSTEPS 1 //micro-steps while moving in straight line
+#define ROTATION_MICROSTEPS 8 //micro-steps while rotating
 
 // Functions
 
 Motion_base::Motion_base(
-	short rightStepperMovementDirectionPinId, 
 	short rightStepperPinId, 
-	short leftStepperMovementDirectionPinId, 
+	short rightStepperMovementDirectionPinId, 
 	short leftStepperPinId, 
+	short leftStepperMovementDirectionPinId, 
+	short ms1PinId,
+	short ms2PinId,
+	short ms3PinId,
 	short initialXPos, 
 	short initialYPos, 
 	double initialAngle
@@ -39,8 +40,8 @@ Motion_base::Motion_base(
 	realAngle = 0;
 
 	//steppers
-	*right = BasicStepperDriver(NBSTEPS, rightStepperMovementDirectionPinId, rightStepperPinId);
-	*left = BasicStepperDriver(NBSTEPS, leftStepperMovementDirectionPinId, leftStepperPinId);
+	*right = DRV8825(NBSTEPS, rightStepperMovementDirectionPinId, rightStepperPinId, ms1PinId, ms2PinId, ms3PinId);
+	*left = DRV8825(NBSTEPS, leftStepperMovementDirectionPinId, leftStepperPinId, ms1PinId, ms2PinId, ms3PinId);
 
 	//controller
 	*controller = SyncDriver(*right, *left);
@@ -54,10 +55,8 @@ Motion_base::Motion_base(
 	lastParam = 0; 
 	lastStepParam = 0;
   
-	/*gestion physique du microstepping*/
-  
-	right->begin(RPM,MICROSTEPS);
-	left->begin(RPM,MICROSTEPS);
+	right->begin(RPM);
+	left->begin(RPM);
   
 }	
 
@@ -78,8 +77,10 @@ Motion_base::Coords Motion_base::getCoords(void){
  */
 
 void Motion_base::moveStraight(short d){ //distance en mm
-  
-	/*gestion physique du microstepping*/
+	
+	//Micro-stepping 
+	right->setMicrostep(STRAIGHT_MICROSTEPS);
+	left->setMicrostep(STRAIGHT_MICROSTEPS);
   
 	const short steps = d * NBSTEPS/2 * M_PI * RAYON_ROUE;
 	controller->startMove(steps,steps); 
@@ -104,7 +105,10 @@ void Motion_base::moveStraight(short d){ //distance en mm
 
 void Motion_base::rotate(double rad){
   
-	/*gestion physique du micro-stepping*/
+	//Micro-stepping
+	right->setMicrostep(ROTATION_MICROSTEPS);
+	left->setMicrostep(ROTATION_MICROSTEPS);
+	
   
 	const short steps = rad * RAYON_ROBOT * NBSTEPS/2 * M_PI * RAYON_ROUE;
 	controller->startMove(steps,-steps);
@@ -206,7 +210,7 @@ void Motion_base::goToCoords(short finalXPos, short finalYPos, double finalAngle
 	const short deltaX = finalXPos-xPos;
 	const short deltaY = finalYPos-yPos;
 
-	//gestion de  la position
+	//position
 	if(deltaX != 0 || deltaY != 0){ // not null movement
     
 		if(deltaX == 0){ // only y movement
@@ -236,7 +240,7 @@ void Motion_base::goToCoords(short finalXPos, short finalYPos, double finalAngle
 
 		const double deltaAngle = finalAngle-angle;
   
-		//gestion de l'angle
+		//angle
 		if(deltaAngle != 0){
 		rotate(deltaAngle);	//potential bug if base still in movement
 		}

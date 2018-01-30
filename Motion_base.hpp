@@ -1,6 +1,9 @@
 #ifndef MOTION_BASE
 #define MOTION_BASE 1
 
+#include <DRV8825.h> //stepper up to 1:32
+#include <SyncDriver.h> //synchronized multi-stepper control
+
 class Motion_base {
   
   public : 
@@ -14,13 +17,16 @@ class Motion_base {
   
 	//builder
     Motion_base(
-      short rightStepperMovementDirectionPinId, 
-      short rightStepperPinId, 
-      short leftStepperMovementDirectionPinId, 
-      short leftStepperPinId, 
-      short initialXpos, 
-      short initialYPos,
-      double initialAngle
+		short rightStepperPinId, 
+		short rightStepperMovementDirectionPinId, 
+		short leftStepperPinId, 
+		short leftStepperMovementDirectionPinId, 
+		short ms1PinId,
+		short ms2PinId,
+		short ms3PinId,
+		short initialXpos, 
+		short initialYPos,
+		double initialAngle
       );
 	  
 	//accessors
@@ -34,8 +40,6 @@ class Motion_base {
 	//coords related functions
     void updateCoords(void);
     void goToCoords(short finalXpos, short finalYPos, double finalAngle);
-	
-	
     
   private : 
   
@@ -46,8 +50,8 @@ class Motion_base {
 	Coords coords;
 	
 	//steppers
-    BasicStepperDriver *right;
-    BasicStepperDriver *left;
+    DRV8825 *right;
+    DRV8825 *left;
 	
 	//controller
 	SyncDriver *controller;
