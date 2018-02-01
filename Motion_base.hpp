@@ -1,8 +1,9 @@
 #ifndef MOTION_BASE
 #define MOTION_BASE 1
 
-#include "StepperDriver/src/DRV8825.h" //stepper up to 1:32
-#include "StepperDriver/src/SyncDriver.h"
+#include "src/StepperDriver/src/BasicStepperDriver.h"
+#include "src/StepperDriver/src/DRV8825.h" //stepper up to 1:32
+#include "src/StepperDriver/src/SyncDriver.h"
 
 class Motion_base {
   

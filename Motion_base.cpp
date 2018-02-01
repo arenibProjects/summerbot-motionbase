@@ -1,5 +1,5 @@
 // Driver headers
-//#include "StepperDriver/src/MultiDriver.h" //multi-stepper control
+//#include "src/StepperDriver/src/MultiDriver.h" //multi-stepper control
 #include <math.h> //math lib
 #include <TimeLib.h>
 
