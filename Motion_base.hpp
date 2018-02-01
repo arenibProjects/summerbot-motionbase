@@ -1,8 +1,8 @@
 #ifndef MOTION_BASE
 #define MOTION_BASE 1
 
-#include <DRV8825.h> //stepper up to 1:32
-#include <SyncDriver.h> //synchronized multi-stepper control
+#include "StepperDriver/src/DRV8825.h" //stepper up to 1:32
+#include "StepperDriver/src/SyncDriver.h"
 
 class Motion_base {
   
