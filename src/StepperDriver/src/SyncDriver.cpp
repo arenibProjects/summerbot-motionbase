@@ -8,6 +8,7 @@
  * A copy of this license has been included with this distribution in the file LICENSE.
  */
 #include "SyncDriver.h"
+#include <Arduino.h>
 
 #define FOREACH_MOTOR(action) for (short i=count-1; i >= 0; i--){action;}
 
@@ -20,17 +21,23 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
     /*
      * find which motor would take the longest to finish,
      */
+     /*
     long move_time = 0;
     FOREACH_MOTOR(
+        Serial.print(":)");Serial.println(abs(steps[i]));
         long m = motors[i]->getTimeForMove(abs(steps[i]));
         timing[i] = m;
+        Serial.print(":P");Serial.println(m);
         if (m > move_time){
             move_time = m;
         }
     );
+    move_time = 0;
+    */
     /*
      * Stretch timing for all others by adjusting rpm proportionally
      */
+     /*
     if (move_time){
         FOREACH_MOTOR(
             if (steps[i]){
@@ -41,12 +48,14 @@ void SyncDriver::startMove(long steps1, long steps2, long steps3){
             }
         );
     }
+    */
     /*
      * Initialize state for all active motors
      */
     FOREACH_MOTOR(
         if (steps[i]){
             motors[i]->startMove(steps[i]);
+            rpms[i] = 0;
         };
         event_timers[i] = 0;
     );

@@ -12,6 +12,7 @@
  * - Atmel AVR446: Linear speed control of stepper motor, 2006
  */
 #include "BasicStepperDriver.h"
+#include <Arduino.h>
 
 /*
  * Basic connection: only DIR, STEP are connected.
@@ -111,7 +112,7 @@ void BasicStepperDriver::rotate(double deg){
  */
 void BasicStepperDriver::startMove(long steps){
     long speed;
-    if (steps_remaining){
+    if (steps_remaining>0){
         alterMove(steps);
     } else {
         // set up new move
@@ -198,9 +199,11 @@ long BasicStepperDriver::getTimeForMove(long steps){
     switch (profile.mode){
         case LINEAR_SPEED:
             startMove(steps);
-            t = sqrt(2 * steps_to_cruise / profile.accel) + 
-                (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
-                sqrt(2 * steps_to_brake / profile.decel);
+            t = (long)(
+                  sqrt((double)(2 * steps_to_cruise / profile.accel)) + 
+                  (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
+                  sqrt((double)(2 * steps_to_brake / profile.decel))
+                );
             break;
         case CONSTANT_SPEED:
         default:
