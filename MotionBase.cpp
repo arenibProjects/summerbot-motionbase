@@ -49,14 +49,15 @@ String MotionBase::movesString(){
 // --- moves creators ---
 void MotionBase::translate(double distance){
     if(distance==0)return;
-    long steps=fabs(distance)*STEP_PER_REVOLUTION/wheelRadius_/2.0/3.141592654359;
+    long steps=fabs(distance)*TRANSLATION_MICROSTEPS*STEP_PER_REVOLUTION/wheelRadius_/2.0/3.141592654359;
     Move* mv = new Move(false,distance<0,steps);
     if(moves_)moves_->append(mv);
     else moves_ = mv;
 }
 void MotionBase::rotate(double rotation){
     if(rotation==0)return;
-    long steps=fabs(rotation)*STEP_PER_REVOLUTION*robotRadius_/wheelRadius_/2.0/3.141592654359;
+    long steps=fabs(rotation)*ROTATION_MICROSTEPS*STEP_PER_REVOLUTION*robotRadius_/wheelRadius_/2.0/3.141592654359;
+    Serial.println(steps);
     Move* mv = new Move(true,rotation<0,steps);
     if(moves_)moves_->append(mv);
     else moves_ = mv;
@@ -64,8 +65,10 @@ void MotionBase::rotate(double rotation){
 void MotionBase::moveTo(double x,double y,double a){
   computeLastMoveCoords();
   double r=atan2(x-lastMoveX_,y-lastMoveX_);
+  Serial.println(r-lastMoveA_);
   rotate(r-lastMoveA_);
   translate(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveX_)*(y-lastMoveX_)));
+  Serial.println(a-r);
   rotate(a-r);
 }
 // ---  ---
@@ -92,14 +95,14 @@ bool MotionBase::update(){
     }else{
       driver_->setMicrostep(TRANSLATION_MICROSTEPS);
     }
-    Serial.println("startMove");
+    Serial.println("asyncMove");
     Serial.println(movesString());
-    driver_->startMove((moves_->direction_?-1:1)*moves_->steps_,(moves_->isRotation_?-1:1)*(moves_->direction_?-1:1)*moves_->steps_);
+    driver_->asyncMove((moves_->direction_?-1:1)*moves_->steps_,(moves_->isRotation_?-1:1)*(moves_->direction_?-1:1)*moves_->steps_);
     motionStarted_ = true;
   }else{
     ended = true;
   }
-  driver_->nextAction();
+  driver_->update();
   return ended;
 }
 void MotionBase::pause(){

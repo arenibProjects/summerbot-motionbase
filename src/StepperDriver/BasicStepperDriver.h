@@ -1,11 +1,8 @@
 /*
- * Generic Stepper Motor Driver Driver
- * Indexer mode only.
- *
- * Copyright (C)2015-2017 Laurentiu Badea
- *
- * This file may be redistributed under the terms of the MIT license.
- * A copy of this license has been included with this distribution in the file LICENSE.
+ * Generic Stepper Motor Driver For Interupt Updates
+ * 
+ * By Titouan Baillon for ARENIB
+ * Based on work from Laurentiu Badea
  */
 #ifndef STEPPER_DRIVER_BASE_H
 #define STEPPER_DRIVER_BASE_H
@@ -91,6 +88,7 @@ protected:
     long steps_to_cruise;   // steps to reach cruising (max) rpm
     long steps_to_brake;    // steps needed to come to a full stop
     long step_pulse;        // step pulse duration (microseconds)
+    long nextStepTime;
 
     // DIR pin state
     short dir_state;
@@ -154,18 +152,18 @@ public:
      * Move the motor a given number of steps.
      * positive to move forward, negative to reverse
      */
-    void move(long steps);
+    void syncMove(long steps);
     /*
      * Rotate the motor a given number of degrees (1-360)
      */
-    void rotate(long deg);
-    inline void rotate(int deg){
-        rotate((long)deg);
+    void syncRotate(long deg);
+    inline void syncRotate(int deg){
+        syncRotate((long)deg);
     };
     /*
      * Rotate using a float or double for increased movement precision.
      */
-    void rotate(double deg);
+    void syncRotate(double deg);
     /*
      * Turn off/on motor to allow the motor to be moved by hand/hold the position in place
      */
@@ -181,16 +179,16 @@ public:
      * Initiate a move over known distance (calculate and save the parameters)
      * Pick just one based on move type and distance type.
      */
-    void startMove(long steps);
-    inline void startRotate(int deg){ 
-        startRotate((long)deg);
+    void asyncMove(long steps);
+    inline void asyncRotate(int deg){ 
+        asyncRotate((long)deg);
     };
-    void startRotate(long deg);
-    void startRotate(double deg);
+    void asyncRotate(long deg);
+    void asyncRotate(double deg);
     /*
-     * Toggle step at the right time and return time until next change is needed (micros)
+     * Toggle step at the right time and return if the motor is working
      */
-    long nextAction(void);
+    bool update(void);
     /*
      * Optionally, call this to begin braking (and then stop) early
      * For constant speed, this is the same as stop()
@@ -217,6 +215,9 @@ public:
     }
     long calcStepsForRotation(double deg){
         return deg * motor_steps * microsteps / 360;
+    }
+    long getRemainingSteps(){
+      return steps_remaining;
     }
 };
 #endif // STEPPER_DRIVER_BASE_H

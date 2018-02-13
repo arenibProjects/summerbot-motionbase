@@ -1,15 +1,8 @@
 /*
- * Generic Stepper Motor Driver Driver
- * Indexer mode only.
-
- * Copyright (C)2015-2017 Laurentiu Badea
- *
- * This file may be redistributed under the terms of the MIT license.
- * A copy of this license has been included with this distribution in the file LICENSE.
- *
- * Linear speed profile calculations based on
- * - Generating stepper-motor speed profiles in real time - David Austin, 2004
- * - Atmel AVR446: Linear speed control of stepper motor, 2006
+ * Generic Stepper Motor Driver Driver For Interupt Updates
+ * 
+ * By Titouan Baillon for ARENIB
+ * Based on work from Laurentiu Badea
  */
 #include "BasicStepperDriver.h"
 #include <Arduino.h>
@@ -88,29 +81,29 @@ void BasicStepperDriver::setSpeedProfile(struct Profile profile){
  * Move the motor a given number of steps.
  * positive to move forward, negative to reverse
  */
-void BasicStepperDriver::move(long steps){
-    startMove(steps);
-    while (nextAction());
+void BasicStepperDriver::syncMove(long steps){
+    asyncMove(steps);
+    while (update());
 }
 /*
  * Move the motor a given number of degrees (1-360)
  */
-void BasicStepperDriver::rotate(long deg){
-    move(calcStepsForRotation(deg));
+void BasicStepperDriver::syncRotate(long deg){
+    syncMove(calcStepsForRotation(deg));
 }
 /*
  * Move the motor with sub-degree precision.
  * Note that using this function even once will add 1K to your program size
  * due to inclusion of float support.
  */
-void BasicStepperDriver::rotate(double deg){
-    move(calcStepsForRotation(deg));
+void BasicStepperDriver::syncRotate(double deg){
+    syncMove(calcStepsForRotation(deg));
 }
 
 /*
  * Set up a new move or alter an active move (calculate and save the parameters)
  */
-void BasicStepperDriver::startMove(long steps){
+void BasicStepperDriver::asyncMove(long steps){
     long speed;
     if (steps_remaining>0){
         alterMove(steps);
@@ -164,7 +157,7 @@ void BasicStepperDriver::alterMove(long steps){
         // would need to start accelerating again -- NOT IMPLEMENTED
         break;
     case STOPPED:
-        startMove(steps);
+        asyncMove(steps);
         break;
     }
 }
@@ -198,7 +191,7 @@ long BasicStepperDriver::getTimeForMove(long steps){
     long t;
     switch (profile.mode){
         case LINEAR_SPEED:
-            startMove(steps);
+            asyncMove(steps);
             t = (long)(
                   sqrt((double)(2 * steps_to_cruise / profile.accel)) + 
                   (steps_remaining - steps_to_cruise - steps_to_brake) * STEP_PULSE(rpm, motor_steps, microsteps) +
@@ -215,16 +208,16 @@ long BasicStepperDriver::getTimeForMove(long steps){
  * Move the motor an integer number of degrees (360 = full rotation)
  * This has poor precision for small amounts, since step is usually 1.8deg
  */
-void BasicStepperDriver::startRotate(long deg){
-    startMove(calcStepsForRotation(deg));
+void BasicStepperDriver::asyncRotate(long deg){
+    asyncMove(calcStepsForRotation(deg));
 }
 /*
  * Move the motor with sub-degree precision.
  * Note that calling this function will increase program size substantially
  * due to inclusion of float support.
  */
-void BasicStepperDriver::startRotate(double deg){
-    startMove(calcStepsForRotation(deg));
+void BasicStepperDriver::asyncRotate(double deg){
+    asyncMove(calcStepsForRotation(deg));
 }
 
 /*
@@ -257,35 +250,37 @@ void BasicStepperDriver::calcStepPulse(void){
 }
 /*
  * Yield to step control
- * Toggle step and return time until next change is needed (micros)
+ * Toggle step and return if the motor is working
  */
-long BasicStepperDriver::nextAction(void){
+bool BasicStepperDriver::update(void){
     if (steps_remaining > 0){
-        delayMicros(next_action_interval, last_action_end);
-        /*
-         * DIR pin is sampled on rising STEP edge, so it is set first
-         */
-        digitalWrite(dir_pin, dir_state);
-        digitalWrite(step_pin, HIGH);
-        unsigned m = micros();
-        long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
-        calcStepPulse();
-        m = micros() - m;
-        // We should pull HIGH for 1-2us (step_high_min)
-        if (m < step_high_min){ // fast MCPU or CONSTANT_SPEED
-            delayMicros(step_high_min-m);
-            m = step_high_min;
-        };
-        digitalWrite(step_pin, LOW);
-        // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
-        last_action_end = micros();
-        next_action_interval = (pulse > m) ? pulse - m : 1;
+        if(micros()>next_action_interval+last_action_end){
+          /*
+           * DIR pin is sampled on rising STEP edge, so it is set first
+           */
+          digitalWrite(dir_pin, dir_state);
+          digitalWrite(step_pin, HIGH);
+          unsigned m = micros();
+          long pulse = step_pulse; // save value because calcStepPulse() will overwrite it
+          calcStepPulse();
+          m = micros() - m;
+          // We should pull HIGH for 1-2us (step_high_min)
+          if (m < step_high_min){ // fast MCPU or CONSTANT_SPEED
+              delayMicros(step_high_min-m);
+              m = step_high_min;
+          };
+          digitalWrite(step_pin, LOW);
+          // account for calcStepPulse() execution time; sets ceiling for max rpm on slower MCUs
+          last_action_end = micros();
+          next_action_interval = (pulse > m) ? pulse - m : 1;
+        }
+        return true;
     } else {
         // end of move
         last_action_end = 0;
         next_action_interval = 0;
+        return false;
     }
-    return next_action_interval;
 }
 
 enum BasicStepperDriver::State BasicStepperDriver::getCurrentState(void){

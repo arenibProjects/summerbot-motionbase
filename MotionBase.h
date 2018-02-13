@@ -2,8 +2,9 @@
 #define MOTIONBASE_H
  
 #include <Arduino.h>
-#include "MyDRV8825.h"
-#include "src/StepperDriver/src/SyncDriver.h"
+#include "src/StepperDriver/DRV8825.h"
+#include "src/StepperDriver/DoubleDriver.h"
+#define Motor DRV8825
  
 #define STEP_PER_REVOLUTION 200
 #define RPM 240
@@ -49,13 +50,13 @@ class MotionBase{
         bool paused_ = false;
         bool motionStarted_ = false;
         Move *moves_=(Move*)0;//chained list
-        MyDRV8825 *left_=(MyDRV8825*)0, *right_=(MyDRV8825*)0;
-        SyncDriver *driver_=(SyncDriver*)0;
+        Motor *left_=(Motor*)0, *right_=(Motor*)0;
+        DoubleDriver *driver_=(DoubleDriver*)0;
         double wheelRadius_,robotRadius_;
     public:
-        MotionBase(MyDRV8825* left, MyDRV8825* right,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
+        MotionBase(Motor* left, Motor* right,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
         :left_{left},right_{right},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
-          driver_ = new SyncDriver(*right_, *left_);
+          driver_ = new DoubleDriver(*right_, *left_);
           right_->begin(RPM);
           left_->begin(RPM);
           right_->setSpeedProfile(right_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
