@@ -124,3 +124,8 @@ void MotionBase::pause(){
 void MotionBase::resume(){
   paused_=false;
 }
+void MotionBase::setPosition(double x,double y,double a){
+  prevX_=x;
+  prevY_=y;
+  prevA_=a;
+}

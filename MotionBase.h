@@ -78,5 +78,7 @@ class MotionBase{
         bool update();
         void pause();
         void resume();
+
+        void setPosition(double x,double y,double a);
 };
 #endif
