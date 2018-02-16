@@ -8,7 +8,7 @@ MotionBase mb(left,right,33,63); // left motor, right motor, wheel radius, robot
 int r = 0;
 void setup (){
   //Timer
-  motionTimer.begin(motionLoop,1000);// 1kHz (1000 is the period in microS)
+  motionTimer.begin(motionLoop,100);// 10kHz (100 is the period in microS)
   motionTimer.priority(1); //slightly above normal
   
   //Serial
