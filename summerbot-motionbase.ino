@@ -9,7 +9,7 @@ int r = 0;
 void setup (){
   //Timer
   motionTimer.begin(motionLoop,1000);// 1kHz (1000 is the period in microS)
-  motionTimer.priority(129); //slightly above normal
+  motionTimer.priority(1); //slightly above normal
   
   //Serial
   Serial.begin(250000);

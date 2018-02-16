@@ -13,15 +13,15 @@
 class DoubleDriver{
 protected:
     unsigned short count;
-    Motor* const *motors;
+    Motor *motors[2]={(Motor*)0,(Motor*)0};
 
 public:
-    DoubleDriver(const unsigned short count, Motor* const *motors)
-    :count(count), motors(motors)
-    {};
     DoubleDriver(Motor* motor1, Motor* motor2)
-    :DoubleDriver(2, new Motor* const[2]{motor1, motor2})
-    {};
+    :count(2)
+    {
+      motors[0]=motor1;
+      motors[1]=motor2;
+    };
 
     void asyncMove(long steps1, long steps2);
     long update(void);
