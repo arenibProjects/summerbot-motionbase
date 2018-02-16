@@ -56,7 +56,7 @@ class MotionBase{
     public:
         MotionBase(Motor* left, Motor* right,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
         :left_{left},right_{right},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
-          driver_ = new DoubleDriver(*right_, *left_);
+          driver_ = new DoubleDriver(right_, left_);
           right_->begin(RPM);
           left_->begin(RPM);
           right_->setSpeedProfile(right_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
