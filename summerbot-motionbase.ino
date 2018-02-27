@@ -1,10 +1,9 @@
 #include <Arduino.h>
-#include "src/StepperDriver/DRV8825.h"
+#include "DualDRV8825.h"
 #include "MotionBase.h"
 IntervalTimer motionTimer;
-DRV8825* right=new DRV8825(200, 31, 29, 26, 25, 24);// steps per rev,dir pin, step pin, mode pin 0, mode pin 1, mode pin 2
-DRV8825* left =new DRV8825(200, 32, 30, 26, 25, 24);
-MotionBase mb(left,right,33,63); // left motor, right motor, wheel radius, robot radius, x, y, a
+DualDRV8825* dd=new DualDRV8825(200, 32, 30, 31, 29, 26, 25, 24);// steps per rev,left dir pin, left step pin, right dir pin, right step pin, mode pin 0, mode pin 1, mode pin 2
+MotionBase mb(dd,33,63); // motors, wheel radius, robot radius, x, y, a
 int r = 0;
 void setup (){
   //Timer

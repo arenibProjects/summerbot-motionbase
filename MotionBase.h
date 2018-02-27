@@ -2,8 +2,7 @@
 #define MOTIONBASE_H
  
 #include <Arduino.h>
-#include "src/StepperDriver/DRV8825.h"
-#include "src/StepperDriver/DoubleDriver.h"
+#include "DualDRV8825.h"
 #define Motor DRV8825
  
 #define STEP_PER_REVOLUTION 200
@@ -50,17 +49,13 @@ class MotionBase{
         bool paused_ = false;
         bool motionStarted_ = false;
         Move *moves_=(Move*)0;//chained list
-        Motor *left_=(Motor*)0, *right_=(Motor*)0;
-        DoubleDriver *driver_=(DoubleDriver*)0;
+        DualDRV8825 *driver_=(DualDRV8825*)0;
         double wheelRadius_,robotRadius_;
     public:
-        MotionBase(Motor* left, Motor* right,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
-        :left_{left},right_{right},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
-          driver_ = new DoubleDriver(right_, left_);
-          right_->begin(RPM);
-          left_->begin(RPM);
-          right_->setSpeedProfile(right_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
-          left_->setSpeedProfile(left_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
+        MotionBase(DualDRV8825 *dd,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
+        :driver_{dd},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
+          driver_->begin(RPM);
+          driver_->setSpeedProfile(driver_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
           driver_->setMicrostep(TRANSLATION_MICROSTEPS);
         };
         // --- moves management ---

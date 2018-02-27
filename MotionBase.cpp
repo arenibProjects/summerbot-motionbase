@@ -77,8 +77,8 @@ bool MotionBase::update(){
   bool ended = false;
   if(motionStarted_){
     if(moves_){
-      const BasicStepperDriver::State rightState = right_->getCurrentState(); // both drivers are controlled simultaneously
-      if(rightState == BasicStepperDriver::STOPPED){ //the robot is not moving
+      const DualDRV8825::State driverState = driver_->getCurrentState();
+      if(driverState == DualDRV8825::STOPPED){ //the robot is not moving
         computeMoveCoords(moves_,&prevX_,&prevY_,&prevA_);
         moves_= moves_->getNext();
         motionStarted_ = false;
@@ -97,7 +97,7 @@ bool MotionBase::update(){
     }
     Serial.println("asyncMove");
     Serial.println(movesString());
-    driver_->asyncMove((moves_->direction_?-1:1)*moves_->steps_,(moves_->isRotation_?-1:1)*(moves_->direction_?-1:1)*moves_->steps_);
+    driver_->asyncMove((moves_->direction_?-1:1)*moves_->steps_,moves_->isRotation_);
     motionStarted_ = true;
   }else{
     ended = true;
@@ -106,18 +106,17 @@ bool MotionBase::update(){
   return ended;
 }
 void MotionBase::pause(){
-  const BasicStepperDriver::State rightState = right_->getCurrentState();
-  if(rightState != BasicStepperDriver::STOPPED){ //the robot is moving
+  const DualDRV8825::State driverState = driver_->getCurrentState();
+  if(driverState != DualDRV8825::STOPPED){ //the robot is moving
     if(moves_){
-      const long remSteps = right_->getRemainingSteps();
+      const long remSteps = driver_->getRemainingSteps();
       const long doneSteps = moves_->steps_ - remSteps;
       moves_->steps_=doneSteps;
       computeMoveCoords(moves_,&prevX_,&prevY_,&prevA_);
       moves_->steps_=remSteps;
       motionStarted_=false;
     }
-    right_->stop();
-    left_->stop();
+    driver_->stop();
   }
   paused_=true;
 }
