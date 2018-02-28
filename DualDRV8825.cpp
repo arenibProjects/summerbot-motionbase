@@ -1,9 +1,4 @@
-/*
- * Generic Stepper Motor Driver Driver For Interupt Updates
- * 
- * By Titouan Baillon for ARENIB
- * Based on work from Laurentiu Badea
- */
+
 #include "DualDRV8825.h"
 #include <Arduino.h>
 

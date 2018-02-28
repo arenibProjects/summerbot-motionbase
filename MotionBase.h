@@ -3,8 +3,7 @@
  
 #include <Arduino.h>
 #include "DualDRV8825.h"
-#define Motor DRV8825
- 
+
 #define STEP_PER_REVOLUTION 200
 #define RPM 240
 #define MOTOR_ACCEL 100
@@ -44,19 +43,24 @@ class Move{
  
 class MotionBase{
     private:
-        double prevX_,prevY_,prevA_;
-        double lastMoveX_,lastMoveY_,lastMoveA_;
+        double prevX_;
+        double prevY_;
+        double prevA_;
+        double lastMoveX_;
+        double lastMoveY_;
+        double lastMoveA_;
         bool paused_ = false;
         bool motionStarted_ = false;
         Move *moves_=(Move*)0;//chained list
         DualDRV8825 *driver_=(DualDRV8825*)0;
-        double wheelRadius_,robotRadius_;
+        double wheelRadius_;
+        double robotRadius_;
     public:
-        MotionBase(DualDRV8825 *dd,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
+        MotionBase(DualDRV8825* dd,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
         :driver_{dd},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
-          driver_->begin(RPM);
-          driver_->setSpeedProfile(driver_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
-          driver_->setMicrostep(TRANSLATION_MICROSTEPS);
+          //driver_->begin(RPM);
+          //driver_->setSpeedProfile(driver_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
+          //driver_->setMicrostep(TRANSLATION_MICROSTEPS);
         };
         // --- moves management ---
         void nextMove();
