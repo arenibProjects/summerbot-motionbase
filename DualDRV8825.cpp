@@ -16,8 +16,8 @@ DualDRV8825::DualDRV8825(short steps, short ldir_pin, short lstep_pin, short rdi
 :motor_steps(steps), ldir_pin(ldir_pin), lstep_pin(lstep_pin), rdir_pin(rdir_pin), rstep_pin(rstep_pin), enable_pin(enable_pin)
 {}
 
-DualDRV8825::DualDRV8825(short steps, short ldir_pin, short lstep_pin, short rdir_pin, short rstep_pin, short ms1_pin, short ms2_pin, short ms3_pin)
-:motor_steps(steps), ldir_pin(ldir_pin), lstep_pin(lstep_pin), rdir_pin(rdir_pin), rstep_pin(rstep_pin),ms1_pin(ms1_pin), ms2_pin(ms2_pin), ms3_pin(ms3_pin)
+DualDRV8825::DualDRV8825(short steps, short ldir, short lstep, short rdir, short rstep, short ms1, short ms2, short ms3)
+:motor_steps(steps), ldir_pin(ldir), lstep_pin(lstep), rdir_pin(rdir), rstep_pin(rstep),ms1_pin(ms1), ms2_pin(ms2), ms3_pin(ms3)
 {}
 
 DualDRV8825::DualDRV8825(short steps, short ldir_pin, short lstep_pin, short rdir_pin, short rstep_pin, short enable_pin, short ms1_pin, short ms2_pin, short ms3_pin)
@@ -33,8 +33,8 @@ void DualDRV8825::begin(short rpm, short microsteps){
     digitalWrite(rdir_pin, HIGH);
 
     pinMode(lstep_pin, OUTPUT);
-    digitalWrite(lstep_pin, LOW);
     pinMode(rstep_pin, OUTPUT);
+    digitalWrite(lstep_pin, LOW);
     digitalWrite(rstep_pin, LOW);
 
     if IS_CONNECTED(enable_pin){
@@ -70,7 +70,12 @@ void DualDRV8825::setRPM(short rpm){
  * Allowed ranges for DualDRV8825 are 1:1 to 1:128
  */
 short DualDRV8825::setMicrostep(short microsteps){
-    setMicrostep(microsteps);
+    for (short ms=1; ms <= getMaxMicrostep(); ms<<=1){
+        if (microsteps == ms){
+            this->microsteps = microsteps;
+            break;
+        }
+    }
 
     if (!IS_CONNECTED(ms1_pin) || !IS_CONNECTED(ms2_pin) || !IS_CONNECTED(ms3_pin)){
         return this->microsteps;

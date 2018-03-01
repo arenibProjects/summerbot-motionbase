@@ -58,9 +58,8 @@ class MotionBase{
     public:
         MotionBase(DualDRV8825* dd,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
         :driver_{dd},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
-          //driver_->begin(RPM);
-          //driver_->setSpeedProfile(driver_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
-          //driver_->setMicrostep(TRANSLATION_MICROSTEPS);
+          driver_->begin(RPM,TRANSLATION_MICROSTEPS);
+          driver_->setSpeedProfile(driver_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
         };
         // --- moves management ---
         void nextMove();

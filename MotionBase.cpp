@@ -57,7 +57,7 @@ void MotionBase::translate(double distance){
 void MotionBase::rotate(double rotation){
     if(rotation==0)return;
     long steps=fabs(rotation)*ROTATION_MICROSTEPS*STEP_PER_REVOLUTION*robotRadius_/wheelRadius_/2.0/3.141592654359;
-    Serial.println(steps);
+    //Serial.println(steps);
     Move* mv = new Move(true,rotation<0,steps);
     if(moves_)moves_->append(mv);
     else moves_ = mv;
@@ -65,10 +65,10 @@ void MotionBase::rotate(double rotation){
 void MotionBase::moveTo(double x,double y,double a){
   computeLastMoveCoords();
   double r=atan2(x-lastMoveX_,y-lastMoveX_);
-  Serial.println(r-lastMoveA_);
+  //Serial.println(r-lastMoveA_);
   rotate(r-lastMoveA_);
   translate(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveX_)*(y-lastMoveX_)));
-  Serial.println(a-r);
+  //Serial.println(a-r);
   rotate(a-r);
 }
 // ---  ---
@@ -82,7 +82,7 @@ bool MotionBase::update(){
         computeMoveCoords(moves_,&prevX_,&prevY_,&prevA_);
         moves_= moves_->getNext();
         motionStarted_ = false;
-        Serial.println("stopped");
+        //Serial.println("stopped");
       }
     }else{
       //error handling
@@ -95,8 +95,8 @@ bool MotionBase::update(){
     }else{
       driver_->setMicrostep(TRANSLATION_MICROSTEPS);
     }
-    Serial.println("asyncMove");
-    Serial.println(movesString());
+    //Serial.println("asyncMove");
+    //Serial.println(movesString());
     driver_->asyncMove((moves_->direction_?-1:1)*moves_->steps_,moves_->isRotation_);
     motionStarted_ = true;
   }else{
