@@ -16,14 +16,14 @@ void setup (){
   //Test move
   delay(5000);
   Serial.println("Test");
-  for(int i = 0 ; i < 3 ; i ++){
+  /*for(int i = 0 ; i < 3 ; i ++){
     digitalWrite(30,HIGH);
     digitalWrite(29,HIGH);
     delay(1);
     digitalWrite(30,LOW);
     digitalWrite(29,LOW);
     delay(5);
-  }
+  }*/
   delay(100);
   Serial.println("Start");
   mb.moveTo(100,100,3.141592/2); //move diagonaly to x=100 y=100 then turn to a=90deg
