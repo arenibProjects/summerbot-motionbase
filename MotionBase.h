@@ -78,5 +78,14 @@ class MotionBase{
         void resume();
 
         void setPosition(double x,double y,double a);
+        double getX(){
+          return prevX_;
+        }
+        double getY(){
+          return prevY_;
+        }
+        double getZ(){
+          return prevZ_;
+        }
 };
 #endif
