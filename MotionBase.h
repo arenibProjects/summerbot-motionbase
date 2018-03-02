@@ -84,8 +84,8 @@ class MotionBase{
         double getY(){
           return prevY_;
         }
-        double getZ(){
-          return prevZ_;
+        double getA(){
+          return prevA_;
         }
 };
 #endif
