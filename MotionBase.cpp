@@ -64,10 +64,10 @@ void MotionBase::rotate(double rotation){
 }
 void MotionBase::moveTo(double x,double y,double a){
   computeLastMoveCoords();
-  double r=atan2(x-lastMoveX_,y-lastMoveX_);
+  double r=atan2(y-lastMoveY_,x-lastMoveX_);
   //Serial.println(r-lastMoveA_);
   rotate(r-lastMoveA_);
-  translate(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveX_)*(y-lastMoveX_)));
+  translate(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveY_)*(y-lastMoveY_)));
   //Serial.println(a-r);
   rotate(a-r);
 }
