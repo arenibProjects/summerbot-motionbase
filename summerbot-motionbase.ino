@@ -15,19 +15,21 @@ void setup (){
   
   //Test move
   delay(5000);
-  Serial.println("Test");
-  /*for(int i = 0 ; i < 3 ; i ++){
-    digitalWrite(30,HIGH);
-    digitalWrite(29,HIGH);
-    delay(1);
-    digitalWrite(30,LOW);
-    digitalWrite(29,LOW);
-    delay(5);
-  }*/
-  delay(100);
   Serial.println("Start");
   mb.moveTo(100,100,3.141592/2); //move diagonaly to x=100 y=100 then turn to a=90deg
+  mb.moveTo(200,200,3.141592/2);
+  mb.moveTo(0,0,0);
+  mb.moveTo(1000,0,3.141592);
+  mb.moveTo(0,0,0);
+  mb.moveTo(1000,0,3.141592);
   Serial.println(mb.movesString()); //should be 3 moves
+  mb.computeLastMoveCoords();
+  Serial.print(mb.getLastMoveX());
+  Serial.print(" ");
+  Serial.print(mb.getLastMoveY());
+  Serial.print(" ");
+  Serial.println(mb.getLastMoveA());
+  delay(1000);
 }
 
 void loop (){
@@ -35,6 +37,11 @@ void loop (){
   if(r>1000){
     Serial.println(mb.movesString());
     Serial.println(dd->getRemainingSteps());
+    Serial.print(mb.getX());
+    Serial.print(" ");
+    Serial.print(mb.getY());
+    Serial.print(" ");
+    Serial.println(mb.getA());
     r=0;
   }
   r++;

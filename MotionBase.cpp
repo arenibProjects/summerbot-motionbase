@@ -13,9 +13,9 @@ void MotionBase::clearMoves(){
 void MotionBase::computeMoveCoords(double ix,double iy,double ia,Move* mv,double* ox, double* oy, double* oa){
   double x=ix,y=iy,a=ia;
   if(mv->isRotation_){
-    a+=(mv->direction_?-1:1)*mv->steps_*wheelRadius_*2.0*3.141592654359/STEP_PER_REVOLUTION/robotRadius_;
+    a+=(mv->direction_?-1:1)*mv->steps_*wheelRadius_*2.0*3.141592654359/STEP_PER_REVOLUTION/ROTATION_MICROSTEPS/robotRadius_;
   }else{
-    double d=(mv->direction_?-1:1)*mv->steps_*wheelRadius_*2.0*3.141592654359/STEP_PER_REVOLUTION;
+    double d=(mv->direction_?-1:1)*mv->steps_*wheelRadius_*2.0*3.141592654359/STEP_PER_REVOLUTION/TRANSLATION_MICROSTEPS;
     x+=cos(a)*d;
     y+=sin(a)*d;
   }

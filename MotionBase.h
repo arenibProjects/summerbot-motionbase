@@ -8,8 +8,8 @@
 #define RPM 240
 #define MOTOR_ACCEL 100
 #define MOTOR_DECEL 100
-#define TRANSLATION_MICROSTEPS 4 //micro-steps while moving in straight line
-#define ROTATION_MICROSTEPS 16 //micro-steps while rotating
+#define TRANSLATION_MICROSTEPS 8 //micro-steps while moving in straight line
+#define ROTATION_MICROSTEPS 32 //micro-steps while rotating
 class Move{
     public:
         bool isRotation_,direction_;
@@ -86,6 +86,15 @@ class MotionBase{
         }
         double getA(){
           return prevA_;
+        }
+        double getLastMoveX(){
+          return lastMoveX_;
+        }
+        double getLastMoveY(){
+          return lastMoveY_;
+        }
+        double getLastMoveA(){
+          return lastMoveA_;
         }
 };
 #endif
