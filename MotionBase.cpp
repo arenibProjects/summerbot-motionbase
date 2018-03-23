@@ -62,6 +62,12 @@ void MotionBase::rotate(double rotation){
     if(moves_)moves_->append(mv);
     else moves_ = mv;
 }
+void MotionBase::moveTo(double x,double y){
+  computeLastMoveCoords();
+  double r=atan2(y-lastMoveY_,x-lastMoveX_);
+  rotate(r-lastMoveA_);
+  translate(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveY_)*(y-lastMoveY_)));
+}
 void MotionBase::moveTo(double x,double y,double a){
   computeLastMoveCoords();
   double r=atan2(y-lastMoveY_,x-lastMoveX_);

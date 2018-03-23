@@ -72,6 +72,7 @@ class MotionBase{
         void translate(double distance);
         void rotate(double rotation);
         void moveTo(double x,double y,double a);
+        void moveTo(double x,double y);
         // ---  ---
         bool update();
         void pause();
