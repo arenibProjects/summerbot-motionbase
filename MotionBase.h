@@ -96,5 +96,8 @@ class MotionBase{
         double getLastMoveA(){
           return lastMoveA_;
         }
+        bool isBusy(){
+          return !!(moves_);
+        }
 };
 #endif
