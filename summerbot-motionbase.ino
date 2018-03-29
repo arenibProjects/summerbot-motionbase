@@ -11,17 +11,17 @@ void setup (){
   motionTimer.priority(1); //slightly above normal
   
   //Serial
-  Serial.begin(9600);
+  Serial.begin(250000);
   
   //Test move
   delay(5000);
   Serial.println("Start");
-  mb.moveTo(100,100,3.141592/2); //move diagonaly to x=100 y=100 then turn to a=90deg
+  mb.moveToRPM(100,100,3.141592/2,400); //move diagonaly to x=100 y=100 then turn to a=90deg
   mb.moveTo(200,200,3.141592/2);
   mb.moveTo(0,0,0);
   mb.moveTo(1000,0,3.141592);
   mb.moveTo(0,0,0);
-  mb.moveTo(1000,0,3.141592);
+  mb.moveToRPM(1000,0,3.141592,48);
   Serial.println(mb.movesString()); //should be 3 moves
   mb.computeLastMoveCoords();
   Serial.print(mb.getLastMoveX());

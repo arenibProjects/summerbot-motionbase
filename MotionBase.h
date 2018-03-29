@@ -5,7 +5,7 @@
 #include "DualDRV8825.h"
 
 #define STEP_PER_REVOLUTION 200
-#define RPM 240
+#define DEFAULT_RPM 240
 #define MOTOR_ACCEL 100
 #define MOTOR_DECEL 100
 #define TRANSLATION_MICROSTEPS 8 //micro-steps while moving in straight line
@@ -14,8 +14,9 @@ class Move{
     public:
         bool isRotation_,direction_;
         long steps_;
+        int RPM_;
         Move* next_=0;
-        Move(bool isRotation,bool direction,long steps):isRotation_{isRotation},direction_{direction},steps_{steps}{};
+        Move(bool isRotation,bool direction,long steps,int RPM):isRotation_{isRotation},direction_{direction},steps_{steps},RPM_{RPM}{};
         Move* getNext(){
             return next_;
         }
@@ -37,7 +38,7 @@ class Move{
             }
         }
         String toString(){
-          return "|"+String(isRotation_)+","+String(direction_)+","+String(steps_)+">";
+          return "|"+String(isRotation_)+","+String(direction_)+","+String(steps_)+","+String(RPM_)+">";
         }
 };
  
@@ -58,7 +59,7 @@ class MotionBase{
     public:
         MotionBase(DualDRV8825* dd,double wheelRadius,double robotRadius,double x=0,double y=0,double a=0)
         :driver_{dd},wheelRadius_{wheelRadius},robotRadius_{robotRadius},prevX_{x},prevY_{y},prevA_{a}{
-          driver_->begin(RPM,TRANSLATION_MICROSTEPS);
+          driver_->begin(DEFAULT_RPM,TRANSLATION_MICROSTEPS);
           driver_->setSpeedProfile(driver_->LINEAR_SPEED, MOTOR_ACCEL, MOTOR_DECEL);
         };
         // --- moves management ---
@@ -73,6 +74,10 @@ class MotionBase{
         void rotate(double rotation);
         void moveTo(double x,double y,double a);
         void moveTo(double x,double y);
+        void translateRPM(double distance,int RPM);
+        void rotateRPM(double rotation,int RPM);
+        void moveToRPM(double x,double y,double a,int RPM);
+        void moveToRPM(double x,double y,int RPM);
         // ---  ---
         bool update();
         void pause();
@@ -89,10 +94,10 @@ class MotionBase{
           return prevA_;
         }
         double getLastMoveX(){
-          return lastMoveX_;
         }
         double getLastMoveY(){
           return lastMoveY_;
+          return lastMoveX_;
         }
         double getLastMoveA(){
           return lastMoveA_;
