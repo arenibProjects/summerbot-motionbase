@@ -1,16 +1,21 @@
 # summerbot-motionbase
-control library for the summerbot's motion base
+Control library for the summerbot's motion base
 
 This library is meant to control the servos in the base of the summerbot.
 
-the folowing fonctionnality are coded but none of them have been tested:
+## Usage
+You can order add a move to the move list with:
+~~~~
+translate(d)
+rotate(a)
+moveto(x,y)
+moveto(x,y,a)
 
-   moveForward(short d) -> move the robot in straight line
-  
-   rotate(double rad) -> rotate the robot by the given angle in radian
-   
-   interruptMovement() -> interrupt the movement by stopping the rotation of the steppers and call updateCoords()
-   
-   updateCoords() -> recalculate the coords depending on the current movement and his state
-   
-   goToCoords(short finalxPos, short finalyPos, double finalAngle) -> move the robot in the given place and the given angle
+translateRPM(d,RPM)
+rotateRPM(a,RPM)
+movetoRPM(x,y,RPM)
+movetoRPM(x,y,a,RPM)
+~~~~
+You have to call `update()` at a high frequency (higher than 10x your max Steps per seconds)\
+You can also get and set position\
+and make a pause at any moment with `pause()` and `unpause()`
