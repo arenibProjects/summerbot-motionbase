@@ -84,20 +84,31 @@ class MotionBase{
         void resume();
 
         void setPosition(double x,double y,double a);
+        
         double getX(){
           return prevX_;
+        }
+        void setX(double x){
+          prevX_=x;
         }
         double getY(){
           return prevY_;
         }
+        void setY(double y){
+          prevY_=y;
+        }
         double getA(){
           return prevA_;
         }
+        
+        void setA(double a){
+          prevA_=a;
+        }
         double getLastMoveX(){
+          return lastMoveX_;
         }
         double getLastMoveY(){
           return lastMoveY_;
-          return lastMoveX_;
         }
         double getLastMoveA(){
           return lastMoveA_;
