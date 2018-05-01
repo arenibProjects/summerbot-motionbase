@@ -116,5 +116,14 @@ class MotionBase{
         bool isBusy(){
           return !!(moves_);
         }
+        void getRealPos(double *x,double *y,double*a){
+          if(moves_){
+            const long remSteps = driver_->getRemainingSteps();
+            const long doneSteps = moves_->steps_ - remSteps;
+            Move *mv = new Move(moves_->isRotation_,moves_->direction_,doneSteps,DEFAULT_RPM);
+            computeMoveCoords(mv,x, y, a);
+            delete mv;
+          }
+        }
 };
 #endif
