@@ -1,4 +1,9 @@
 #include "MotionBase.h"
+
+double shortestAngle(double a){
+  return fabs(a)>3.141592?3.141592-a:a;
+}
+
 // --- moves management ---
 void MotionBase::nextMove(){
   Move* mv = moves_;
@@ -74,7 +79,7 @@ void MotionBase::moveTo(double x,double y){
 void MotionBase::moveToRPM(double x,double y,int RPM){
   computeLastMoveCoords();
   double r=atan2(y-lastMoveY_,x-lastMoveX_);
-  rotateRPM(r-lastMoveA_,RPM);
+  rotateRPM(shortestAngle(r-lastMoveA_),RPM);
   translateRPM(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveY_)*(y-lastMoveY_)),RPM);
 }
 void MotionBase::moveTo(double x,double y,double a){
@@ -84,10 +89,10 @@ void MotionBase::moveToRPM(double x,double y,double a,int RPM){
   computeLastMoveCoords();
   double r=atan2(y-lastMoveY_,x-lastMoveX_);
   //Serial.println(r-lastMoveA_);
-  rotateRPM(r-lastMoveA_,RPM);
+  rotateRPM(shortestAngle(r-lastMoveA_),RPM);
   translateRPM(sqrt((x-lastMoveX_)*(x-lastMoveX_)+(y-lastMoveY_)*(y-lastMoveY_)),RPM);
   //Serial.println(a-r);
-  rotateRPM(a-r,RPM);
+  rotateRPM(shortestAngle(a-r),RPM);
 }
 // ---  ---
 bool MotionBase::update(){
