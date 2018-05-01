@@ -1,7 +1,7 @@
 #include "MotionBase.h"
 
 double shortestAngle(double a){
-  return fabs(a)>3.141592?(a>0?3.141592*2-a:a-3.141592*2):a;
+  return fabs(a)>3.141592?(a>0?3.141592*2-a:-a-3.141592*2):a;
 }
 
 // --- moves management ---
