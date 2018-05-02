@@ -123,6 +123,10 @@ class MotionBase{
             Move *mv = new Move(moves_->isRotation_,moves_->direction_,doneSteps,DEFAULT_RPM);
             computeMoveCoords(mv,x, y, a);
             delete mv;
+          }else{
+            *x=prevX_;
+            *y=prevY_;
+            *a=prevA_;
           }
         }
 };
