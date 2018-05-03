@@ -74,7 +74,7 @@ void MotionBase::rotateRPM(double rotation,int RPM){
     else moves_ = mv;
 }
 void MotionBase::moveTo(double x,double y){
-  MotionBase::moveTo(x,y,DEFAULT_RPM);
+  moveToRPM(x,y,DEFAULT_RPM);
 }
 void MotionBase::moveToRPM(double x,double y,int RPM){
   computeLastMoveCoords();
